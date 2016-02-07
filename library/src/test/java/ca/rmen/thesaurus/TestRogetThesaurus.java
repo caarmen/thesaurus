@@ -26,8 +26,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.SortedSet;
 
-public class TestThesaurus {
-    private static final String THESAURUS_FILE = "src/main/resources/dictionary_files/pg10681.txt";
+public class TestRogetThesaurus {
 
     @Test
     public void testThesaurus() throws IOException {
