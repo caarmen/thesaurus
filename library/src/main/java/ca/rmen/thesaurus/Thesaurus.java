@@ -21,6 +21,7 @@ package ca.rmen.thesaurus;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ public class Thesaurus {
 
     public Set<ThesaurusEntry> getSynonyms(String word) {
         Set<ThesaurusEntry> entries = entriesMap.get(word);
+        if (entries == null) return new HashSet<>();
         return Collections.unmodifiableSet(entries);
     }
 

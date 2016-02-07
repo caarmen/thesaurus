@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 
 public class WordNetThesaurusReader {
     private static final String ROOT_FOLDER = "/dictionary_files/wordnet/";
-    private static final String THESAURUS_FILE = ROOT_FOLDER + "th_en_US_new.dat";
+    private static final String THESAURUS_FILE = ROOT_FOLDER + "th_en_US_v2.dat";
     private WordNetThesaurusReader() {
         // prevent instantiation of a utility class
     }
@@ -51,7 +51,8 @@ public class WordNetThesaurusReader {
     static Map<String, Set<ThesaurusEntry>> read(InputStream is) throws IOException {
         Map<String, Set<ThesaurusEntry>> result = new HashMap<>();
         BufferedReader bufferedReader = null;
-        Pattern pattern = Pattern.compile("^\\(([a-z]*)\\)(.*)$");
+        Pattern relatedWordsPattern = Pattern.compile("^\\(([a-z]*)\\)(.*)$");
+        Pattern relatedWordPattern = Pattern.compile("^ *([^(]*)\\((.*)\\)");
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(is));
             String currentWord = null;
@@ -64,16 +65,30 @@ public class WordNetThesaurusReader {
                     currentEntries = new HashSet<>();
                     result.put(currentWord, currentEntries);
                 } else {
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.matches()) {
-                        String wordType = matcher.group(1).toUpperCase(Locale.US);
-                        String tokens = matcher.group(2);
-                        String[] synonyms = tokens.split("\\|");
+                    Matcher relatedWordsMatcher = relatedWordsPattern.matcher(line);
+                    if (relatedWordsMatcher.matches()) {
+                        String wordType = relatedWordsMatcher.group(1).toUpperCase(Locale.US);
+                        String tokens = relatedWordsMatcher.group(2);
+                        String[] relatedWords = tokens.split("\\|");
                         SortedSet<String> sortedSynonyms = new TreeSet<>();
-                        for (String synonym: synonyms) {
-                            if (!synonym.isEmpty()) sortedSynonyms.add(synonym);
+                        SortedSet<String> sortedAntonyms = new TreeSet<>();
+                        for (String relatedWord : relatedWords) {
+                            if (!relatedWord.isEmpty()) {
+                                if(!relatedWord.contains("(")) {
+                                    sortedSynonyms.add(relatedWord.trim());
+                                } else {
+                                    Matcher relatedWordMatcher = relatedWordPattern.matcher(relatedWord);
+                                    if(relatedWordMatcher.matches()) {
+                                        relatedWord = relatedWordMatcher.group(1).trim();
+                                        String typeOfWord = relatedWordMatcher.group(2).trim();
+                                        if("antonym".equals(typeOfWord)) sortedAntonyms.add(relatedWord);
+                                        else sortedSynonyms.add(relatedWord);
+                                    }
+                                }
+
+                            }
                         }
-                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType), sortedSynonyms);
+                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType), sortedSynonyms, sortedAntonyms);
                         currentEntries.add(entry);
                     }
                 }

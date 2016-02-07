@@ -52,13 +52,14 @@ public class RogetThesaurusReader {
             bufferedReader = new BufferedReader(new InputStreamReader(is));
             String currentWord = null;
             SortedSet<String> currentSynonyms = new TreeSet<>();
+            SortedSet<String> emptySet = new TreeSet<>();
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
                 if (line.isEmpty()) continue;
                 if (line.startsWith(";;;")) continue;
                 if (line.charAt(0) != ' ') {
                     currentWord = line;
                     currentSynonyms = new TreeSet<>();
-                    ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN, currentSynonyms);
+                    ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN, currentSynonyms, emptySet);
                     Set<ThesaurusEntry> entries = new HashSet<>();
                     entries.add(entry);
                     result.put(currentWord, entries);

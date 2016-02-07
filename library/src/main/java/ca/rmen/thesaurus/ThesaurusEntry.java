@@ -31,10 +31,12 @@ public class ThesaurusEntry {
     }
     public final WordType wordType;
     public final SortedSet<String> synonyms;
+    public final SortedSet<String> antonyms;
 
-    public ThesaurusEntry(WordType wordType, SortedSet<String> synonyms) {
+    public ThesaurusEntry(WordType wordType, SortedSet<String> synonyms, SortedSet<String> antonyms) {
         this.wordType = wordType;
         this.synonyms = synonyms;
+        this.antonyms = antonyms;
     }
 
 }

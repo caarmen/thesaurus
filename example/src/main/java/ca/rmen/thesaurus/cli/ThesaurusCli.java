@@ -43,7 +43,9 @@ public class ThesaurusCli {
         entries = thesaurus.getSynonyms(word);
         System.out.println("WordNet Thesaurus: Synonyms for " + word + ": ");
         for (ThesaurusEntry entry : entries) {
-            System.out.println("  (" + entry.wordType + "): " + entry.synonyms);
+            System.out.println("  (" + entry.wordType + "): ");
+            System.out.println("     synonyms: " + entry.synonyms);
+            System.out.println("     antonyms: " + entry.antonyms);
         }
     }
 }
