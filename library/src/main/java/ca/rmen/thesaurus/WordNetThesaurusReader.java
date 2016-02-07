@@ -60,28 +60,46 @@ public class WordNetThesaurusReader {
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
                 if (line.isEmpty()) continue;
                 if (line.startsWith(";;;")) continue;
+                // Example line to start a new word:
+                // hold|45
+                // This means the word hold has 45 thesaurus entries
                 if (line.charAt(0) != '(') {
+                    // Strip off the |45 at the end.
                     currentWord = line.replaceAll("\\|.*$", "");
                     currentEntries = new HashSet<>();
                     result.put(currentWord, currentEntries);
                 } else {
+                    // Example entry lines containing related words for "hold":
+                    // (verb)|take hold|let go of (antonym)
+                    // (verb)|restrain|confine|disable (generic term)|disenable (generic term)|incapacitate (generic term)
                     Matcher relatedWordsMatcher = relatedWordsPattern.matcher(line);
                     if (relatedWordsMatcher.matches()) {
+                        // wordType: ex: verb, noun, etc.
                         String wordType = relatedWordsMatcher.group(1).toUpperCase(Locale.US);
+                        // tokens: pipe-separated list of related words
                         String tokens = relatedWordsMatcher.group(2);
                         String[] relatedWords = tokens.split("\\|");
+
                         SortedSet<String> sortedSynonyms = new TreeSet<>();
                         SortedSet<String> sortedAntonyms = new TreeSet<>();
+
                         for (String relatedWord : relatedWords) {
                             if (!relatedWord.isEmpty()) {
+                                // Example related word without any qualifier: "restrain"
                                 if(!relatedWord.contains("(")) {
                                     sortedSynonyms.add(relatedWord.trim());
-                                } else {
+                                }
+                                // Example related words with qualifiers (we only care about the antonym one for now):
+                                // "disable (generic term)"
+                                // "let go of (antonym)"
+                                else {
                                     Matcher relatedWordMatcher = relatedWordPattern.matcher(relatedWord);
                                     if(relatedWordMatcher.matches()) {
                                         relatedWord = relatedWordMatcher.group(1).trim();
                                         String typeOfWord = relatedWordMatcher.group(2).trim();
+                                        // The "antonym" qualifier means this related word goes into the antonyms list.
                                         if("antonym".equals(typeOfWord)) sortedAntonyms.add(relatedWord);
+                                        // All other qualifiers: the word goes to the synonyms list
                                         else sortedSynonyms.add(relatedWord);
                                     }
                                 }
