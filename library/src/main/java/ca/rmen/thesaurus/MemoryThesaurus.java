@@ -31,6 +31,7 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MemoryThesaurus implements Thesaurus, Externalizable {
 
@@ -45,6 +46,10 @@ public class MemoryThesaurus implements Thesaurus, Externalizable {
         ThesaurusEntry[] entries = entriesMap.get(word);
         if (entries == null) return new ThesaurusEntry[0];
         return entries;
+    }
+
+    public Set<String> getWords() {
+        return entriesMap.keySet();
     }
 
     public void buildIndex(Map<String, ThesaurusEntry[]> entriesMap) {
