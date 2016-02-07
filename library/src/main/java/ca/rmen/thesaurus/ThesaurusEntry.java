@@ -23,6 +23,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Arrays;
 
 public class ThesaurusEntry implements Externalizable {
     public enum WordType {
@@ -82,5 +83,35 @@ public class ThesaurusEntry implements Externalizable {
         }
         return result;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ThesaurusEntry that = (ThesaurusEntry) o;
+
+        if (wordType != that.wordType) {
+            return false;
+        }
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(synonyms, that.synonyms)) {
+            return false;
+        }
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if(!Arrays.equals(antonyms, that.antonyms)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = wordType != null ? wordType.hashCode() : 0;
+        result = 31 * result + Arrays.hashCode(synonyms);
+        result = 31 * result + Arrays.hashCode(antonyms);
+        return result;
+    }
+
 
 }

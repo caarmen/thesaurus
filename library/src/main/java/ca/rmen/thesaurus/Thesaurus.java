@@ -28,6 +28,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,5 +97,30 @@ public class Thesaurus implements Externalizable {
             }
             entriesMap.put(word, entries);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Thesaurus thesaurus = (Thesaurus) o;
+
+        if (entriesMap == null && thesaurus.entriesMap == null) return true;
+        if (entriesMap == null || thesaurus.entriesMap == null) return false;
+        if (!entriesMap.keySet().equals(thesaurus.entriesMap.keySet())) return false;
+        for (String word : entriesMap.keySet()) {
+            ThesaurusEntry[] myEntries = entriesMap.get(word);
+            ThesaurusEntry[] otherEntries = thesaurus.entriesMap.get(word);
+            if(!Arrays.equals(myEntries, otherEntries)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return entriesMap != null ? entriesMap.hashCode() : 0;
     }
 }

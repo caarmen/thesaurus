@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,7 +50,6 @@ public class RogetThesaurusReader {
             bufferedReader = new BufferedReader(new InputStreamReader(is));
             String currentWord = null;
             Set<String> currentSynonyms = new HashSet<>();
-            Set<String> emptySet = Collections.emptySet();
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
                 if (line.isEmpty()) continue;
                 if (line.startsWith(";;;")) continue;
