@@ -52,7 +52,7 @@ public class ThesaurusCli {
 
             System.out.println("Loading thesaurus from disk");
             before = System.currentTimeMillis();
-            Thesaurus thesaurus = MemoryThesaurus.load(inputFile);
+            Thesaurus thesaurus = MemoryThesaurus.loadBinary(inputFile);
             after = System.currentTimeMillis();
             System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
             search(thesaurus, word);
@@ -76,12 +76,12 @@ public class ThesaurusCli {
             System.out.println("Saving Roget thesaurus");
 
             before = System.currentTimeMillis();
-            rogetThesaurus.save(new File(outputFile.getParent(), "roget-" + outputFile.getName()));
+            rogetThesaurus.saveBinary(new File(outputFile.getParent(), "roget-" + outputFile.getName()));
             after = System.currentTimeMillis();
             System.out.println("Saved in " + ((float)(after - before)/1000) + " seconds");
             System.out.println("Saving WordNet thesaurus");
             before = System.currentTimeMillis();
-            wordNetThesaurus.save(new File(outputFile.getParent(), "wordnet-" + outputFile.getName()));
+            wordNetThesaurus.saveBinary(new File(outputFile.getParent(), "wordnet-" + outputFile.getName()));
             after = System.currentTimeMillis();
             System.out.println("Saved in " + ((float)(after - before)/1000) + " seconds");
         }

@@ -52,14 +52,20 @@ public class MemoryThesaurus implements Thesaurus, Externalizable {
         this.entriesMap.putAll(entriesMap);
     }
 
-    public void save(File file) throws IOException {
+    /**
+     * Save the thesaurus to a binary file.
+     */
+    public void saveBinary(File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(this);
         fos.close();
     }
 
-    public static Thesaurus load(File file) throws IOException, ClassNotFoundException {
+    /**
+     * Load a Thesaurus from a file which was saved with #saveBinary
+     */
+    public static Thesaurus loadBinary(File file) throws IOException, ClassNotFoundException {
         FileInputStream fis = new FileInputStream(file);
         ObjectInputStream ois = new ObjectInputStream(fis);
         return (Thesaurus) ois.readObject();
