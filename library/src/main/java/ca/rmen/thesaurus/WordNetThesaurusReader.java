@@ -49,12 +49,19 @@ public class WordNetThesaurusReader {
     static Map<String, ThesaurusEntry[]> read(InputStream is) throws IOException {
         Map<String, ThesaurusEntry[]> result = new HashMap<>();
         BufferedReader bufferedReader = null;
+        // Ex: (verb)|take hold|let go of (antonym)
         Pattern relatedWordsPattern = Pattern.compile("^\\(([a-z]*)\\)(.*)$");
+        // Ex: let go of (antonym)
         Pattern relatedWordPattern = Pattern.compile("^ *([^(]*)\\((.*)\\)");
+        // Ex: hold|45
+        Pattern entryPattern = Pattern.compile("^([^(|]*)\\|([0-9]*)$");
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(is));
             String currentWord = null;
-            Set<ThesaurusEntry> currentEntries = new HashSet<>();
+            ThesaurusEntry[] currentEntries = null;
+            int currentEntryIndex = 0;
+            Set<String> synonyms = new HashSet<>();
+            Set<String> antonyms = new HashSet<>();
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
                 if (line.isEmpty()) continue;
                 if (line.startsWith(";;;")) continue;
@@ -62,12 +69,16 @@ public class WordNetThesaurusReader {
                 // hold|45
                 // This means the word hold has 45 thesaurus entries
                 if (line.charAt(0) != '(') {
-                    // Strip off the |45 at the end.
                     if (currentWord != null) {
-                        result.put(currentWord, currentEntries.toArray(new ThesaurusEntry[currentEntries.size()]));
+                        result.put(currentWord, currentEntries);
                     }
-                    currentWord = line.replaceAll("\\|.*$", "");
-                    currentEntries = new HashSet<>();
+                    Matcher entryMatcher = entryPattern.matcher(line);
+                    if(entryMatcher.matches()) {
+                        currentWord = entryMatcher.group(1);
+                        int entryCount = Integer.valueOf(entryMatcher.group(2));
+                        currentEntries = new ThesaurusEntry[entryCount];
+                        currentEntryIndex = 0;
+                    }
                 } else {
                     // Example entry lines containing related words for "hold":
                     // (verb)|take hold|let go of (antonym)
@@ -80,8 +91,8 @@ public class WordNetThesaurusReader {
                         String tokens = relatedWordsMatcher.group(2);
                         String[] relatedWords = tokens.split("\\|");
 
-                        Set<String> synonyms = new HashSet<>();
-                        Set<String> antonyms = new HashSet<>();
+                        synonyms.clear();
+                        antonyms.clear();
 
                         for (String relatedWord : relatedWords) {
                             if (!relatedWord.isEmpty()) {
@@ -109,7 +120,7 @@ public class WordNetThesaurusReader {
                         ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType),
                                 synonyms.toArray(new String[synonyms.size()]),
                                 antonyms.toArray(new String[antonyms.size()]));
-                        currentEntries.add(entry);
+                        currentEntries[currentEntryIndex++] = entry;
                     }
                 }
             }
