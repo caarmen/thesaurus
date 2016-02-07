@@ -23,31 +23,31 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Arrays;
 
 public class TestWordNetThesaurus {
 
     @Test
     public void testThesaurus() throws IOException {
         Thesaurus thesaurus = WordNetThesaurusReader.createThesaurus();
-        Set<ThesaurusEntry> entries = thesaurus.getEntries("hold");
+        ThesaurusEntry[] entries = thesaurus.getEntries("hold");
         Assert.assertNotNull(entries);
-        Assert.assertEquals(45, entries.size());
+        Assert.assertEquals(45, entries.length);
         assertHasSynonym("hold", entries, "handle");
         assertHasSynonym("hold", entries, "intermission");
         assertHasAntonym("hold", entries, "let go of");
     }
 
-    private void assertHasSynonym(String word, Set<ThesaurusEntry> entries, String synonym) {
+    private void assertHasSynonym(String word, ThesaurusEntry[] entries, String synonym) {
         for (ThesaurusEntry entry : entries) {
-            if (entry.synonyms.contains(synonym)) return;
+            if (Arrays.asList(entry.synonyms).contains(synonym)) return;
         }
         Assert.assertTrue(word + " should have" + synonym + " as a synonym", false);
     }
 
-    private void assertHasAntonym(String word, Set<ThesaurusEntry> entries, String antonym) {
+    private void assertHasAntonym(String word, ThesaurusEntry[] entries, String antonym) {
         for (ThesaurusEntry entry : entries) {
-            if (entry.antonyms.contains(antonym)) return;
+            if (Arrays.asList(entry.antonyms).contains(antonym)) return;
         }
         Assert.assertTrue(word + " should have" + antonym + " as an antonym", false);
     }

@@ -24,32 +24,76 @@ import ca.rmen.thesaurus.Thesaurus;
 import ca.rmen.thesaurus.ThesaurusEntry;
 import ca.rmen.thesaurus.WordNetThesaurusReader;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.Arrays;
 
 public class ThesaurusCli {
-    public static void main(String[] args) throws IOException {
-        String word = args[0];
+    private static void usage() {
+        System.out.println("[-load <file>] [-save <file>] query");
+        System.exit(-1);
+    }
 
-        System.out.println("Loading Roget thesaurus");
-        Thesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
-        System.out.println("Loading WordNet thesaurus");
-        Thesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
-        System.out.println("Loading thesauruses");
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        String word = args[args.length - 1];
 
-        Set<ThesaurusEntry> entries = rogetThesaurus.getEntries(word);
-        System.out.println("Roget's Thesaurus: Synonyms for " + word + ": ");
-        for (ThesaurusEntry entry : entries) {
-            System.out.println("  " + entry.synonyms);
+        File inputFile = null;
+        File outputFile = null;
+        for (int i = 0; i < args.length - 1; i++) {
+            if ("-load".equals(args[i])) inputFile = new File(args[++i]);
+            else if ("-save".equals(args[i])) outputFile = new File(args[++i]);
+            else if ("-help".equals(args[i])) usage();
         }
 
+        long before;
+        long after;
+        if (inputFile != null) {
+
+            System.out.println("Loading thesaurus from disk");
+            before = System.currentTimeMillis();
+            Thesaurus thesaurus = Thesaurus.load(inputFile);
+            after = System.currentTimeMillis();
+            System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
+            search(thesaurus, word);
+        }
+
+        System.out.println("Loading Roget thesaurus");
+        before = System.currentTimeMillis();
+        Thesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
+        after = System.currentTimeMillis();
+        System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
+        search(rogetThesaurus, word);
+
+        System.out.println("Loading WordNet thesaurus");
+        before = System.currentTimeMillis();
+        Thesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
+        after = System.currentTimeMillis();
+        System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
+        search(wordNetThesaurus, word);
+
+        if (outputFile != null) {
+            System.out.println("Saving Roget thesaurus");
+
+            before = System.currentTimeMillis();
+            rogetThesaurus.save(new File(outputFile.getParent(), "roget-" + outputFile.getName()));
+            after = System.currentTimeMillis();
+            System.out.println("Saved in " + ((float)(after - before)/1000) + " seconds");
+            System.out.println("Saving WordNet thesaurus");
+            before = System.currentTimeMillis();
+            wordNetThesaurus.save(new File(outputFile.getParent(), "wordnet-" + outputFile.getName()));
+            after = System.currentTimeMillis();
+            System.out.println("Saved in " + ((float)(after - before)/1000) + " seconds");
+        }
+    }
+
+    private static void search(Thesaurus thesaurus, String query) {
         System.out.println();
-        entries = wordNetThesaurus.getEntries(word);
-        System.out.println("WordNet Thesaurus: Synonyms for " + word + ": ");
+        ThesaurusEntry[] entries = thesaurus.getEntries(query);
+        System.out.println("Thesaurus: Synonyms for " + query + ": ");
         for (ThesaurusEntry entry : entries) {
             System.out.println("  (" + entry.wordType + "): ");
-            System.out.println("     synonyms: " + entry.synonyms);
-            System.out.println("     antonyms: " + entry.antonyms);
+            System.out.println("     synonyms: " + Arrays.toString(entry.synonyms));
+            System.out.println("     antonyms: " + Arrays.toString(entry.antonyms));
         }
     }
 }

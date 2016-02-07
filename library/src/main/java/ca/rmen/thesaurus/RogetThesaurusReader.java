@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class RogetThesaurusReader {
     private static final String ROOT_FOLDER = "/dictionary_files/roget/";
@@ -40,29 +38,31 @@ public class RogetThesaurusReader {
     public static Thesaurus createThesaurus() throws IOException {
         Thesaurus thesaurus = new Thesaurus();
         InputStream is = RogetThesaurusReader.class.getResourceAsStream(THESAURUS_FILE);
-        Map<String, Set<ThesaurusEntry>> map = read(is);
+        Map<String, ThesaurusEntry[]> map = read(is);
         thesaurus.buildIndex(map);
         return thesaurus;
     }
 
-    static Map<String, Set<ThesaurusEntry>> read(InputStream is) throws IOException {
-        Map<String, Set<ThesaurusEntry>> result = new HashMap<>();
+    static Map<String, ThesaurusEntry[]> read(InputStream is) throws IOException {
+        Map<String, ThesaurusEntry[]> result = new HashMap<>();
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(is));
             String currentWord = null;
-            SortedSet<String> currentSynonyms = new TreeSet<>();
-            SortedSet<String> emptySet = new TreeSet<>();
+            Set<String> currentSynonyms = new HashSet<>();
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
                 if (line.isEmpty()) continue;
                 if (line.startsWith(";;;")) continue;
                 if (line.charAt(0) != ' ') {
+                    if (currentWord != null) {
+                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN,
+                                currentSynonyms.toArray(new String[currentSynonyms.size()]),
+                                new String[0]);
+                        ThesaurusEntry[] entries = new ThesaurusEntry[]{entry};
+                        result.put(currentWord, entries);
+                    }
                     currentWord = line;
-                    currentSynonyms = new TreeSet<>();
-                    ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN, currentSynonyms, emptySet);
-                    Set<ThesaurusEntry> entries = new HashSet<>();
-                    entries.add(entry);
-                    result.put(currentWord, entries);
+                    currentSynonyms = new HashSet<>();
                 } else {
                     String synonymsString = line.replaceAll(" [0-9]*$", "");
                     String[] tokens = synonymsString.split(",");

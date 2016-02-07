@@ -22,19 +22,17 @@ package ca.rmen.thesaurus;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
-public class TestRogetThesaurus {
+public class TestSerialization {
 
     @Test
-    public void testThesaurus() throws IOException {
-        Thesaurus thesaurus = RogetThesaurusReader.createThesaurus();
-        ThesaurusEntry[] entries = thesaurus.getEntries("hate");
-        Assert.assertNotNull(entries);
-        Assert.assertEquals(1, entries.length);
-        String[] synonyms = entries[0].synonyms;
-        Assert.assertEquals(5, synonyms.length);
-        Assert.assertTrue(Arrays.asList(synonyms).contains("dislike"));
+    public void testSerialization() throws IOException, ClassNotFoundException {
+        Thesaurus thesaurus1 = WordNetThesaurusReader.createThesaurus();
+        File tempFile = File.createTempFile("thesaurus-ser", null);
+        thesaurus1.save(tempFile);
+        Thesaurus thesaurus2 = Thesaurus.load(tempFile);
+        Assert.assertEquals(thesaurus1, thesaurus2);
     }
 }
