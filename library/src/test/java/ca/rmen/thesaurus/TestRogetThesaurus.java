@@ -31,7 +31,7 @@ public class TestRogetThesaurus {
     @Test
     public void testThesaurus() throws IOException {
         Thesaurus thesaurus = RogetThesaurusReader.createThesaurus();
-        Set<ThesaurusEntry> entries = thesaurus.getSynonyms("hate");
+        Set<ThesaurusEntry> entries = thesaurus.getEntries("hate");
         Assert.assertNotNull(entries);
         Assert.assertEquals(1, entries.size());
         SortedSet<String> synonyms = entries.iterator().next().synonyms;

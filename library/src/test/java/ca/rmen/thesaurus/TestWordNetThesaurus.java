@@ -30,7 +30,7 @@ public class TestWordNetThesaurus {
     @Test
     public void testThesaurus() throws IOException {
         Thesaurus thesaurus = WordNetThesaurusReader.createThesaurus();
-        Set<ThesaurusEntry> entries = thesaurus.getSynonyms("hold");
+        Set<ThesaurusEntry> entries = thesaurus.getEntries("hold");
         Assert.assertNotNull(entries);
         Assert.assertEquals(45, entries.size());
         assertHasSynonym("hold", entries, "handle");

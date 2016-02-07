@@ -29,7 +29,7 @@ public class Thesaurus {
 
     private final Map<String, Set<ThesaurusEntry>> entriesMap = new HashMap<>();
 
-    public Set<ThesaurusEntry> getSynonyms(String word) {
+    public Set<ThesaurusEntry> getEntries(String word) {
         Set<ThesaurusEntry> entries = entriesMap.get(word);
         if (entries == null) return new HashSet<>();
         return Collections.unmodifiableSet(entries);

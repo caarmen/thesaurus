@@ -31,16 +31,20 @@ public class ThesaurusCli {
     public static void main(String[] args) throws IOException {
         String word = args[0];
 
-        Thesaurus thesaurus = RogetThesaurusReader.createThesaurus();
-        Set<ThesaurusEntry> entries = thesaurus.getSynonyms(word);
+        System.out.println("Loading Roget thesaurus");
+        Thesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
+        System.out.println("Loading WordNet thesaurus");
+        Thesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
+        System.out.println("Loading thesauruses");
+
+        Set<ThesaurusEntry> entries = rogetThesaurus.getEntries(word);
         System.out.println("Roget's Thesaurus: Synonyms for " + word + ": ");
         for (ThesaurusEntry entry : entries) {
             System.out.println("  " + entry.synonyms);
         }
 
         System.out.println();
-        thesaurus = WordNetThesaurusReader.createThesaurus();
-        entries = thesaurus.getSynonyms(word);
+        entries = wordNetThesaurus.getEntries(word);
         System.out.println("WordNet Thesaurus: Synonyms for " + word + ": ");
         for (ThesaurusEntry entry : entries) {
             System.out.println("  (" + entry.wordType + "): ");
