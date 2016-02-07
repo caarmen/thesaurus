@@ -29,7 +29,7 @@ public class TestRogetThesaurus {
 
     @Test
     public void testThesaurus() throws IOException {
-        Thesaurus thesaurus = RogetThesaurusReader.createThesaurus();
+        MemoryThesaurus thesaurus = RogetThesaurusReader.createThesaurus();
         ThesaurusEntry[] entries = thesaurus.getEntries("hate");
         Assert.assertNotNull(entries);
         Assert.assertEquals(1, entries.length);

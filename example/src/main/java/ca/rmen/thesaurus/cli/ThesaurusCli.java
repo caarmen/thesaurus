@@ -19,6 +19,7 @@
 
 package ca.rmen.thesaurus.cli;
 
+import ca.rmen.thesaurus.MemoryThesaurus;
 import ca.rmen.thesaurus.RogetThesaurusReader;
 import ca.rmen.thesaurus.Thesaurus;
 import ca.rmen.thesaurus.ThesaurusEntry;
@@ -51,7 +52,7 @@ public class ThesaurusCli {
 
             System.out.println("Loading thesaurus from disk");
             before = System.currentTimeMillis();
-            Thesaurus thesaurus = Thesaurus.load(inputFile);
+            Thesaurus thesaurus = MemoryThesaurus.load(inputFile);
             after = System.currentTimeMillis();
             System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
             search(thesaurus, word);
@@ -59,14 +60,14 @@ public class ThesaurusCli {
 
         System.out.println("Loading Roget thesaurus");
         before = System.currentTimeMillis();
-        Thesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
+        MemoryThesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
         after = System.currentTimeMillis();
         System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
         search(rogetThesaurus, word);
 
         System.out.println("Loading WordNet thesaurus");
         before = System.currentTimeMillis();
-        Thesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
+        MemoryThesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
         after = System.currentTimeMillis();
         System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
         search(wordNetThesaurus, word);
