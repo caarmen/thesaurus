@@ -19,20 +19,25 @@
 
 package ca.rmen.thesaurus;
 
+import java.io.Externalizable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Thesaurus implements Serializable {
+public class Thesaurus implements Externalizable {
 
-    private static final long serialVersionUID = 1;
     private final Map<String, ThesaurusEntry[]> entriesMap = new HashMap<>();
+
+    public Thesaurus() {
+
+    }
 
     public ThesaurusEntry[] getEntries(String word) {
         ThesaurusEntry[] entries = entriesMap.get(word);
@@ -56,5 +61,40 @@ public class Thesaurus implements Serializable {
         FileInputStream fis = new FileInputStream(file);
         ObjectInputStream ois = new ObjectInputStream(fis);
         return (Thesaurus) ois.readObject();
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        int wordCount = entriesMap.keySet().size();
+        out.writeInt(wordCount);
+        for(String word : entriesMap.keySet()) {
+            out.writeInt(word.length());
+            out.writeChars(word);
+            ThesaurusEntry[] entries = entriesMap.get(word);
+            out.writeInt(entries.length);
+            for(ThesaurusEntry entry : entries) {
+                entry.writeExternal(out);
+            }
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int wordCount = in.readInt();
+        for(int i=0; i < wordCount; i++) {
+            int wordLength = in.readInt();
+            char[] chars = new char[wordLength];
+            for (int j = 0; j < wordLength; j++) {
+                chars[j] = in.readChar();
+            }
+            String word = String.valueOf(chars);
+            int entryCount = in.readInt();
+            ThesaurusEntry[] entries =  new ThesaurusEntry[entryCount];
+            for (int j=0; j < entryCount; j++) {
+                entries[j] = new ThesaurusEntry();
+                entries[j].readExternal(in);
+            }
+            entriesMap.put(word, entries);
+        }
     }
 }

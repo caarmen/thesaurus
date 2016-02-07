@@ -19,9 +19,12 @@
 
 package ca.rmen.thesaurus;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
-public class ThesaurusEntry implements Serializable {
+public class ThesaurusEntry implements Externalizable {
     public enum WordType {
         ADJ,
         ADV,
@@ -29,14 +32,55 @@ public class ThesaurusEntry implements Serializable {
         VERB,
         UNKNOWN
     }
-    public final WordType wordType;
-    public final String[] synonyms;
-    public final String[] antonyms;
+
+    public WordType wordType;
+    public String[] synonyms;
+    public String[] antonyms;
 
     public ThesaurusEntry(WordType wordType, String[] synonyms, String[] antonyms) {
         this.wordType = wordType;
         this.synonyms = synonyms;
         this.antonyms = antonyms;
+    }
+
+    public ThesaurusEntry() {
+
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(wordType.ordinal());
+        writeStringArray(out, synonyms);
+        writeStringArray(out, antonyms);
+    }
+
+    private void writeStringArray(ObjectOutput out, String[] strings) throws IOException {
+        out.writeInt(strings.length);
+        for (String string : strings) {
+            out.writeInt(string.length());
+            out.writeChars(string);
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        wordType = WordType.values()[in.readInt()];
+        synonyms = readStringArray(in);
+        antonyms = readStringArray(in);
+    }
+
+    private String[] readStringArray(ObjectInput in) throws IOException {
+        int numStrings = in.readInt();
+        String[] result = new String[numStrings];
+        for (int i = 0; i < numStrings; i++) {
+            int stringLength = in.readInt();
+            char[] chars = new char[stringLength];
+            for (int j = 0; j < stringLength; j++) {
+                chars[j] = in.readChar();
+            }
+            result[i] = String.valueOf(chars);
+        }
+        return result;
     }
 
 }
