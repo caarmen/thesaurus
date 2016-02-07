@@ -1,8 +1,10 @@
 Thesaurus
 =========
 
-This library provides a thesaurus based on the the Roget's Thesaurus of English Words and
-Phrases, by Roget, 1911: http://www.gutenberg.org/ebooks/10681
+This library provides a thesaurus based on:
+
+* The the Roget's Thesaurus of English Words and Phrases, by Roget, 1911: http://www.gutenberg.org/ebooks/10681
+* The WordNet 2.0 thesauraus ported for OpenOffice: https://www.openoffice.org/lingucomponent/thesaurus.html
 
 To test out the library on the command-line:
 

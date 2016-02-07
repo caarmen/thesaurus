@@ -19,9 +19,10 @@
 
 package ca.rmen.thesaurus.cli;
 
+import ca.rmen.thesaurus.RogetThesaurusReader;
 import ca.rmen.thesaurus.Thesaurus;
 import ca.rmen.thesaurus.ThesaurusEntry;
-import ca.rmen.thesaurus.ThesaurusReader;
+import ca.rmen.thesaurus.WordNetThesaurusReader;
 
 import java.io.IOException;
 import java.util.Set;
@@ -29,10 +30,18 @@ import java.util.Set;
 public class ThesaurusCli {
     public static void main(String[] args) throws IOException {
         String word = args[0];
-        Thesaurus thesaurus = ThesaurusReader.createThesaurus();
-        Set<ThesaurusEntry> entries = thesaurus.getSynonyms(word);
 
-        System.out.println("Synonyms for " + word + ": ");
+        Thesaurus thesaurus = RogetThesaurusReader.createThesaurus();
+        Set<ThesaurusEntry> entries = thesaurus.getSynonyms(word);
+        System.out.println("Roget's Thesaurus: Synonyms for " + word + ": ");
+        for (ThesaurusEntry entry : entries) {
+            System.out.println("  " + entry.synonyms);
+        }
+
+        System.out.println();
+        thesaurus = WordNetThesaurusReader.createThesaurus();
+        entries = thesaurus.getSynonyms(word);
+        System.out.println("WordNet Thesaurus: Synonyms for " + word + ": ");
         for (ThesaurusEntry entry : entries) {
             System.out.println("  (" + entry.wordType + "): " + entry.synonyms);
         }
