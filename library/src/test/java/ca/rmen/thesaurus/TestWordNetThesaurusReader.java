@@ -25,7 +25,6 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 public class TestWordNetThesaurusReader {
     private static final String THESAURUS_FILE = "src/main/resources/dictionary_files/wordnet/th_en_US_new.dat";
@@ -33,11 +32,11 @@ public class TestWordNetThesaurusReader {
     @Test
     public void testLoadThesaurus() throws IOException {
         FileInputStream inputStream = new FileInputStream(THESAURUS_FILE);
-        Map<String, Set<ThesaurusEntry>> map = WordNetThesaurusReader.read(inputStream);
+        Map<String, ThesaurusEntry[]> map = WordNetThesaurusReader.read(inputStream);
         //Assert.assertEquals(55544, map.size());
-        Set<ThesaurusEntry> entries = map.get("hate");
+        ThesaurusEntry[] entries = map.get("hate");
         Assert.assertNotNull(entries);
-        Assert.assertEquals(2, entries.size());
+        Assert.assertEquals(2, entries.length);
         boolean foundDislike = false;
         for (ThesaurusEntry entry : entries) {
             if (entry.synonyms.contains("dislike")) {

@@ -19,24 +19,42 @@
 
 package ca.rmen.thesaurus;
 
-import java.util.Collections;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-public class Thesaurus {
+public class Thesaurus implements Serializable {
 
-    private final Map<String, Set<ThesaurusEntry>> entriesMap = new HashMap<>();
+    private static final long serialVersionUID = 1;
+    private final Map<String, ThesaurusEntry[]> entriesMap = new HashMap<>();
 
-    public Set<ThesaurusEntry> getEntries(String word) {
-        Set<ThesaurusEntry> entries = entriesMap.get(word);
-        if (entries == null) return new HashSet<>();
-        return Collections.unmodifiableSet(entries);
+    public ThesaurusEntry[] getEntries(String word) {
+        ThesaurusEntry[] entries = entriesMap.get(word);
+        if (entries == null) return new ThesaurusEntry[0];
+        return entries;
     }
 
-    public void buildIndex(Map<String, Set<ThesaurusEntry>> entriesMap) {
+    public void buildIndex(Map<String, ThesaurusEntry[]> entriesMap) {
         this.entriesMap.clear();
         this.entriesMap.putAll(entriesMap);
+    }
+
+    public void save(File file) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(this);
+        fos.close();
+    }
+
+    public static Thesaurus load(File file) throws IOException, ClassNotFoundException {
+        FileInputStream fis = new FileInputStream(file);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        return (Thesaurus) ois.readObject();
     }
 }

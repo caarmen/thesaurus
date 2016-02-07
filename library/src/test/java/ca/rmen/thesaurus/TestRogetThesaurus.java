@@ -24,17 +24,16 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.SortedSet;
 
 public class TestRogetThesaurus {
 
     @Test
     public void testThesaurus() throws IOException {
         Thesaurus thesaurus = RogetThesaurusReader.createThesaurus();
-        Set<ThesaurusEntry> entries = thesaurus.getEntries("hate");
+        ThesaurusEntry[] entries = thesaurus.getEntries("hate");
         Assert.assertNotNull(entries);
-        Assert.assertEquals(1, entries.size());
-        SortedSet<String> synonyms = entries.iterator().next().synonyms;
+        Assert.assertEquals(1, entries.length);
+        Set<String> synonyms = entries[0].synonyms;
         Assert.assertEquals(5, synonyms.size());
         Assert.assertTrue(synonyms.contains("dislike"));
     }

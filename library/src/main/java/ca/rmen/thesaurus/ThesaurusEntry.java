@@ -19,9 +19,10 @@
 
 package ca.rmen.thesaurus;
 
-import java.util.SortedSet;
+import java.io.Serializable;
+import java.util.Set;
 
-public class ThesaurusEntry {
+public class ThesaurusEntry implements Serializable {
     public enum WordType {
         ADJ,
         ADV,
@@ -30,10 +31,10 @@ public class ThesaurusEntry {
         UNKNOWN
     }
     public final WordType wordType;
-    public final SortedSet<String> synonyms;
-    public final SortedSet<String> antonyms;
+    public final Set<String> synonyms;
+    public final Set<String> antonyms;
 
-    public ThesaurusEntry(WordType wordType, SortedSet<String> synonyms, SortedSet<String> antonyms) {
+    public ThesaurusEntry(WordType wordType, Set<String> synonyms, Set<String> antonyms) {
         this.wordType = wordType;
         this.synonyms = synonyms;
         this.antonyms = antonyms;

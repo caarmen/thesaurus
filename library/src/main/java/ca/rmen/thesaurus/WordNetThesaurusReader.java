@@ -28,8 +28,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,13 +41,13 @@ public class WordNetThesaurusReader {
     public static Thesaurus createThesaurus() throws IOException {
         Thesaurus thesaurus = new Thesaurus();
         InputStream is = WordNetThesaurusReader.class.getResourceAsStream(THESAURUS_FILE);
-        Map<String, Set<ThesaurusEntry>> map = read(is);
+        Map<String, ThesaurusEntry[]> map = read(is);
         thesaurus.buildIndex(map);
         return thesaurus;
     }
 
-    static Map<String, Set<ThesaurusEntry>> read(InputStream is) throws IOException {
-        Map<String, Set<ThesaurusEntry>> result = new HashMap<>();
+    static Map<String, ThesaurusEntry[]> read(InputStream is) throws IOException {
+        Map<String, ThesaurusEntry[]> result = new HashMap<>();
         BufferedReader bufferedReader = null;
         Pattern relatedWordsPattern = Pattern.compile("^\\(([a-z]*)\\)(.*)$");
         Pattern relatedWordPattern = Pattern.compile("^ *([^(]*)\\((.*)\\)");
@@ -65,9 +63,11 @@ public class WordNetThesaurusReader {
                 // This means the word hold has 45 thesaurus entries
                 if (line.charAt(0) != '(') {
                     // Strip off the |45 at the end.
+                    if (currentWord != null) {
+                        result.put(currentWord, currentEntries.toArray(new ThesaurusEntry[currentEntries.size()]));
+                    }
                     currentWord = line.replaceAll("\\|.*$", "");
                     currentEntries = new HashSet<>();
-                    result.put(currentWord, currentEntries);
                 } else {
                     // Example entry lines containing related words for "hold":
                     // (verb)|take hold|let go of (antonym)
@@ -80,14 +80,14 @@ public class WordNetThesaurusReader {
                         String tokens = relatedWordsMatcher.group(2);
                         String[] relatedWords = tokens.split("\\|");
 
-                        SortedSet<String> sortedSynonyms = new TreeSet<>();
-                        SortedSet<String> sortedAntonyms = new TreeSet<>();
+                        Set<String> synonyms = new HashSet<>();
+                        Set<String> antonyms = new HashSet<>();
 
                         for (String relatedWord : relatedWords) {
                             if (!relatedWord.isEmpty()) {
                                 // Example related word without any qualifier: "restrain"
                                 if(!relatedWord.contains("(")) {
-                                    sortedSynonyms.add(relatedWord.trim());
+                                    synonyms.add(relatedWord.trim());
                                 }
                                 // Example related words with qualifiers (we only care about the antonym one for now):
                                 // "disable (generic term)"
@@ -98,15 +98,15 @@ public class WordNetThesaurusReader {
                                         relatedWord = relatedWordMatcher.group(1).trim();
                                         String typeOfWord = relatedWordMatcher.group(2).trim();
                                         // The "antonym" qualifier means this related word goes into the antonyms list.
-                                        if("antonym".equals(typeOfWord)) sortedAntonyms.add(relatedWord);
+                                        if("antonym".equals(typeOfWord)) antonyms.add(relatedWord);
                                         // All other qualifiers: the word goes to the synonyms list
-                                        else sortedSynonyms.add(relatedWord);
+                                        else synonyms.add(relatedWord);
                                     }
                                 }
 
                             }
                         }
-                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType), sortedSynonyms, sortedAntonyms);
+                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType), synonyms, antonyms);
                         currentEntries.add(entry);
                     }
                 }

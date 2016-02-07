@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 public class TestRogetThesaurusReader {
     private static final String THESAURUS_FILE = "src/main/resources/dictionary_files/roget/pg10681.txt";
@@ -34,10 +33,10 @@ public class TestRogetThesaurusReader {
     @Test
     public void testLoadThesaurus() throws IOException {
         FileInputStream inputStream = new FileInputStream(THESAURUS_FILE);
-        Map<String, Set<ThesaurusEntry>> map = RogetThesaurusReader.read(inputStream);
+        Map<String, ThesaurusEntry[]> map = RogetThesaurusReader.read(inputStream);
         //Assert.assertEquals(55544, map.size());
-        Set<ThesaurusEntry> entries = map.get("hate");
-        SortedSet<String> synonyms = entries.iterator().next().synonyms;
+        ThesaurusEntry[] entries = map.get("hate");
+        Set<String> synonyms = entries[0].synonyms;
         Assert.assertEquals(5, synonyms.size());
         Assert.assertTrue(synonyms.contains("dislike"));
     }
