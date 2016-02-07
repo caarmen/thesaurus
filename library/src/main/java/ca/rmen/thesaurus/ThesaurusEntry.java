@@ -20,7 +20,6 @@
 package ca.rmen.thesaurus;
 
 import java.io.Serializable;
-import java.util.Set;
 
 public class ThesaurusEntry implements Serializable {
     public enum WordType {
@@ -31,10 +30,10 @@ public class ThesaurusEntry implements Serializable {
         UNKNOWN
     }
     public final WordType wordType;
-    public final Set<String> synonyms;
-    public final Set<String> antonyms;
+    public final String[] synonyms;
+    public final String[] antonyms;
 
-    public ThesaurusEntry(WordType wordType, Set<String> synonyms, Set<String> antonyms) {
+    public ThesaurusEntry(WordType wordType, String[] synonyms, String[] antonyms) {
         this.wordType = wordType;
         this.synonyms = synonyms;
         this.antonyms = antonyms;

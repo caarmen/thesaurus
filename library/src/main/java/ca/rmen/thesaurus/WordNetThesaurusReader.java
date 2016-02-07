@@ -106,7 +106,9 @@ public class WordNetThesaurusReader {
 
                             }
                         }
-                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType), synonyms, antonyms);
+                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.valueOf(wordType),
+                                synonyms.toArray(new String[synonyms.size()]),
+                                antonyms.toArray(new String[antonyms.size()]));
                         currentEntries.add(entry);
                     }
                 }

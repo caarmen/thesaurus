@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 public class TestWordNetThesaurusReader {
@@ -39,7 +40,7 @@ public class TestWordNetThesaurusReader {
         Assert.assertEquals(2, entries.length);
         boolean foundDislike = false;
         for (ThesaurusEntry entry : entries) {
-            if (entry.synonyms.contains("dislike")) {
+            if (Arrays.asList(entry.synonyms).contains("dislike")) {
                 foundDislike = true;
                 break;
             }

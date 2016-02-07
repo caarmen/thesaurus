@@ -56,11 +56,15 @@ public class RogetThesaurusReader {
                 if (line.isEmpty()) continue;
                 if (line.startsWith(";;;")) continue;
                 if (line.charAt(0) != ' ') {
+                    if (currentWord != null) {
+                        ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN,
+                                currentSynonyms.toArray(new String[currentSynonyms.size()]),
+                                new String[0]);
+                        ThesaurusEntry[] entries = new ThesaurusEntry[]{entry};
+                        result.put(currentWord, entries);
+                    }
                     currentWord = line;
                     currentSynonyms = new HashSet<>();
-                    ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN, currentSynonyms, emptySet);
-                    ThesaurusEntry[] entries = new ThesaurusEntry[]{entry};
-                    result.put(currentWord, entries);
                 } else {
                     String synonymsString = line.replaceAll(" [0-9]*$", "");
                     String[] tokens = synonymsString.split(",");

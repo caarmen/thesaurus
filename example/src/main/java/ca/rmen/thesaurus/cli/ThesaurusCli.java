@@ -26,6 +26,7 @@ import ca.rmen.thesaurus.WordNetThesaurusReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ThesaurusCli {
     private static void usage() {
@@ -91,8 +92,8 @@ public class ThesaurusCli {
         System.out.println("Thesaurus: Synonyms for " + query + ": ");
         for (ThesaurusEntry entry : entries) {
             System.out.println("  (" + entry.wordType + "): ");
-            System.out.println("     synonyms: " + entry.synonyms);
-            System.out.println("     antonyms: " + entry.antonyms);
+            System.out.println("     synonyms: " + Arrays.toString(entry.synonyms));
+            System.out.println("     antonyms: " + Arrays.toString(entry.antonyms));
         }
     }
 }

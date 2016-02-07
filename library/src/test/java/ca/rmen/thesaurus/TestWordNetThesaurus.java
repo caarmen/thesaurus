@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class TestWordNetThesaurus {
 
@@ -39,14 +40,14 @@ public class TestWordNetThesaurus {
 
     private void assertHasSynonym(String word, ThesaurusEntry[] entries, String synonym) {
         for (ThesaurusEntry entry : entries) {
-            if (entry.synonyms.contains(synonym)) return;
+            if (Arrays.asList(entry.synonyms).contains(synonym)) return;
         }
         Assert.assertTrue(word + " should have" + synonym + " as a synonym", false);
     }
 
     private void assertHasAntonym(String word, ThesaurusEntry[] entries, String antonym) {
         for (ThesaurusEntry entry : entries) {
-            if (entry.antonyms.contains(antonym)) return;
+            if (Arrays.asList(entry.antonyms).contains(antonym)) return;
         }
         Assert.assertTrue(word + " should have" + antonym + " as an antonym", false);
     }

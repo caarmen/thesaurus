@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Arrays;
 
 public class TestRogetThesaurus {
 
@@ -33,8 +33,8 @@ public class TestRogetThesaurus {
         ThesaurusEntry[] entries = thesaurus.getEntries("hate");
         Assert.assertNotNull(entries);
         Assert.assertEquals(1, entries.length);
-        Set<String> synonyms = entries[0].synonyms;
-        Assert.assertEquals(5, synonyms.size());
-        Assert.assertTrue(synonyms.contains("dislike"));
+        String[] synonyms = entries[0].synonyms;
+        Assert.assertEquals(5, synonyms.length);
+        Assert.assertTrue(Arrays.asList(synonyms).contains("dislike"));
     }
 }
