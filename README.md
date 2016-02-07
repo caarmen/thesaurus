@@ -4,7 +4,7 @@ Thesaurus
 This library provides a thesaurus based on:
 
 * The the Roget's Thesaurus of English Words and Phrases, by Roget, 1911: http://www.gutenberg.org/ebooks/10681
-* The WordNet 2.0 thesauraus used in OpenOffice and LibreOffice: (https://wiki.openoffice.org/wiki/Dictionaries, https://github.com/LibreOffice/dictionaries/tree/master/en)
+* The WordNet 2.0 thesaurus used in OpenOffice and LibreOffice: (https://wiki.openoffice.org/wiki/Dictionaries, https://github.com/LibreOffice/dictionaries/tree/master/en)
 
 To test out the library on the command-line:
 
