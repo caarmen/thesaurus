@@ -19,22 +19,22 @@
 
 package ca.rmen.thesaurus;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 
-public class Thesaurus {
+public class ThesaurusEntry {
+    public enum WordType {
+        ADJ,
+        ADV,
+        NOUN,
+        VERB,
+        UNKNOWN
+    }
+    public final WordType wordType;
+    public final SortedSet<String> synonyms;
 
-    private final Map<String, Set<ThesaurusEntry>> entriesMap = new HashMap<>();
-
-    public Set<ThesaurusEntry> getSynonyms(String word) {
-        Set<ThesaurusEntry> entries = entriesMap.get(word);
-        return Collections.unmodifiableSet(entries);
+    public ThesaurusEntry(WordType wordType, SortedSet<String> synonyms) {
+        this.wordType = wordType;
+        this.synonyms = synonyms;
     }
 
-    public void buildIndex(Map<String, Set<ThesaurusEntry>> entriesMap) {
-        this.entriesMap.clear();
-        this.entriesMap.putAll(entriesMap);
-    }
 }

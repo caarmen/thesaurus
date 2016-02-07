@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.SortedSet;
 
 public class TestThesaurus {
@@ -31,7 +32,10 @@ public class TestThesaurus {
     @Test
     public void testThesaurus() throws IOException {
         Thesaurus thesaurus = ThesaurusReader.createThesaurus();
-        SortedSet<String> synonyms = thesaurus.getSynonyms("hate");
+        Set<ThesaurusEntry> entries = thesaurus.getSynonyms("hate");
+        Assert.assertNotNull(entries);
+        Assert.assertEquals(1, entries.size());
+        SortedSet<String> synonyms = entries.iterator().next().synonyms;
         Assert.assertEquals(5, synonyms.size());
         Assert.assertTrue(synonyms.contains("dislike"));
     }

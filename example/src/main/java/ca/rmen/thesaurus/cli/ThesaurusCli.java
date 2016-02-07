@@ -20,17 +20,21 @@
 package ca.rmen.thesaurus.cli;
 
 import ca.rmen.thesaurus.Thesaurus;
+import ca.rmen.thesaurus.ThesaurusEntry;
 import ca.rmen.thesaurus.ThesaurusReader;
 
 import java.io.IOException;
-import java.util.SortedSet;
+import java.util.Set;
 
 public class ThesaurusCli {
     public static void main(String[] args) throws IOException {
         String word = args[0];
         Thesaurus thesaurus = ThesaurusReader.createThesaurus();
-        SortedSet<String> synonyms = thesaurus.getSynonyms(word);
+        Set<ThesaurusEntry> entries = thesaurus.getSynonyms(word);
+
         System.out.println("Synonyms for " + word + ": ");
-        System.out.println("  " + synonyms);
+        for (ThesaurusEntry entry : entries) {
+            System.out.println("  (" + entry.wordType + "): " + entry.synonyms);
+        }
     }
 }

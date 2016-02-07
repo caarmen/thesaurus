@@ -25,6 +25,7 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 public class TestThesaurusReader {
@@ -33,9 +34,10 @@ public class TestThesaurusReader {
     @Test
     public void testLoadThesaurus() throws IOException {
         FileInputStream inputStream = new FileInputStream(THESAURUS_FILE);
-        Map<String, SortedSet<String>> map = ThesaurusReader.read(inputStream);
+        Map<String, Set<ThesaurusEntry>> map = ThesaurusReader.read(inputStream);
         //Assert.assertEquals(55544, map.size());
-        SortedSet<String> synonyms = map.get("hate");
+        Set<ThesaurusEntry> entries = map.get("hate");
+        SortedSet<String> synonyms = entries.iterator().next().synonyms;
         Assert.assertEquals(5, synonyms.size());
         Assert.assertTrue(synonyms.contains("dislike"));
     }

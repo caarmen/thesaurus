@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -38,13 +40,13 @@ public class ThesaurusReader {
     public static Thesaurus createThesaurus() throws IOException {
         Thesaurus thesaurus = new Thesaurus();
         InputStream is = ThesaurusReader.class.getResourceAsStream(THESAURUS_FILE);
-        Map<String, SortedSet<String>> map = read(is);
+        Map<String, Set<ThesaurusEntry>> map = read(is);
         thesaurus.buildIndex(map);
         return thesaurus;
     }
 
-    static Map<String, SortedSet<String>> read(InputStream is) throws IOException {
-        Map<String, SortedSet<String>> result = new HashMap<>();
+    static Map<String, Set<ThesaurusEntry>> read(InputStream is) throws IOException {
+        Map<String, Set<ThesaurusEntry>> result = new HashMap<>();
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -56,7 +58,10 @@ public class ThesaurusReader {
                 if (line.charAt(0) != ' ') {
                     currentWord = line;
                     currentSynonyms = new TreeSet<>();
-                    result.put(currentWord, currentSynonyms);
+                    ThesaurusEntry entry = new ThesaurusEntry(ThesaurusEntry.WordType.UNKNOWN, currentSynonyms);
+                    Set<ThesaurusEntry> entries = new HashSet<>();
+                    entries.add(entry);
+                    result.put(currentWord, entries);
                 } else {
                     String synonymsString = line.replaceAll(" [0-9]*$", "");
                     String[] tokens = synonymsString.split(",");
