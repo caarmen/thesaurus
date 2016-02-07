@@ -19,6 +19,7 @@
 
 package ca.rmen.thesaurus.cli;
 
+import ca.rmen.thesaurus.MemoryThesaurus;
 import ca.rmen.thesaurus.RogetThesaurusReader;
 import ca.rmen.thesaurus.Thesaurus;
 import ca.rmen.thesaurus.ThesaurusEntry;
@@ -30,59 +31,64 @@ import java.util.Arrays;
 
 public class ThesaurusCli {
     private static void usage() {
-        System.out.println("[-load <file>] [-save <file>] query");
+        System.out.println("Usages:");
+        System.out.println("query [-load <file>] <query>");
+        System.out.println("exportdb <roget|wordnet> </path/to/db/file>");
+        System.out.println("exportbin <roget|wordnet> </path/to/binary/file>");
         System.exit(-1);
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        String word = args[args.length - 1];
-
-        File inputFile = null;
-        File outputFile = null;
-        for (int i = 0; i < args.length - 1; i++) {
-            if ("-load".equals(args[i])) inputFile = new File(args[++i]);
-            else if ("-save".equals(args[i])) outputFile = new File(args[++i]);
-            else if ("-help".equals(args[i])) usage();
+        if (args.length < 2) {
+            usage();
         }
+        String command = args[0];
+        if ("query".equals(command)) {
+            String word = args[args.length - 1];
+            File binaryFile = null;
+            if (args.length == 4) {
+                binaryFile = new File(args[2]);
+            }
+            runQuery(binaryFile, word);
 
+        } else if ("exportdb".equals(command)) {
+            if(args.length != 3) usage();
+            exportDb(args[1], new File(args[2]));
+
+        } else if ("exportbin".equals(command)) {
+            if(args.length != 3) usage();
+            exportBin(args[1], new File(args[2]));
+        } else {
+            usage();
+        }
+    }
+
+    private static void runQuery(File inputFile, String word) throws IOException, ClassNotFoundException {
         long before;
         long after;
         if (inputFile != null) {
 
             System.out.println("Loading thesaurus from disk");
             before = System.currentTimeMillis();
-            Thesaurus thesaurus = Thesaurus.load(inputFile);
+            Thesaurus thesaurus = MemoryThesaurus.loadBinary(inputFile);
             after = System.currentTimeMillis();
-            System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
+            System.out.println("Loaded in " + ((float) (after - before) / 1000) + " seconds");
             search(thesaurus, word);
-        }
-
-        System.out.println("Loading Roget thesaurus");
-        before = System.currentTimeMillis();
-        Thesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
-        after = System.currentTimeMillis();
-        System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
-        search(rogetThesaurus, word);
-
-        System.out.println("Loading WordNet thesaurus");
-        before = System.currentTimeMillis();
-        Thesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
-        after = System.currentTimeMillis();
-        System.out.println("Loaded in " + ((float)(after - before)/1000) + " seconds");
-        search(wordNetThesaurus, word);
-
-        if (outputFile != null) {
-            System.out.println("Saving Roget thesaurus");
-
+        } else {
+            System.out.println("Loading Roget thesaurus");
             before = System.currentTimeMillis();
-            rogetThesaurus.save(new File(outputFile.getParent(), "roget-" + outputFile.getName()));
+            MemoryThesaurus rogetThesaurus = RogetThesaurusReader.createThesaurus();
             after = System.currentTimeMillis();
-            System.out.println("Saved in " + ((float)(after - before)/1000) + " seconds");
-            System.out.println("Saving WordNet thesaurus");
+            System.out.println("Loaded in " + ((float) (after - before) / 1000) + " seconds");
+            search(rogetThesaurus, word);
+
+            System.out.println("Loading WordNet thesaurus");
             before = System.currentTimeMillis();
-            wordNetThesaurus.save(new File(outputFile.getParent(), "wordnet-" + outputFile.getName()));
+            MemoryThesaurus wordNetThesaurus = WordNetThesaurusReader.createThesaurus();
             after = System.currentTimeMillis();
-            System.out.println("Saved in " + ((float)(after - before)/1000) + " seconds");
+            System.out.println("Loaded in " + ((float) (after - before) / 1000) + " seconds");
+            search(wordNetThesaurus, word);
+
         }
     }
 
@@ -95,5 +101,19 @@ public class ThesaurusCli {
             System.out.println("     synonyms: " + Arrays.toString(entry.synonyms));
             System.out.println("     antonyms: " + Arrays.toString(entry.antonyms));
         }
+    }
+
+    private static void exportDb(String thesaurusType, File outputFile) throws IOException {
+        MemoryThesaurus thesaurus = "roget".equals(thesaurusType) ? RogetThesaurusReader.createThesaurus() : WordNetThesaurusReader.createThesaurus();
+        DbExport.export(thesaurus, outputFile);
+    }
+
+    private static void exportBin(String thesaurusType, File outputFile) throws IOException {
+        MemoryThesaurus thesaurus = "roget".equals(thesaurusType) ? RogetThesaurusReader.createThesaurus() : WordNetThesaurusReader.createThesaurus();
+        long before = System.currentTimeMillis();
+        thesaurus.saveBinary(new File(outputFile.getParent(), outputFile.getName()));
+        long after = System.currentTimeMillis();
+        System.out.println("Saved in " + ((float) (after - before) / 1000) + " seconds");
+
     }
 }

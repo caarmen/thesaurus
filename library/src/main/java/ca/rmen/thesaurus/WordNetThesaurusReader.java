@@ -38,8 +38,8 @@ public class WordNetThesaurusReader {
         // prevent instantiation of a utility class
     }
 
-    public static Thesaurus createThesaurus() throws IOException {
-        Thesaurus thesaurus = new Thesaurus();
+    public static MemoryThesaurus createThesaurus() throws IOException {
+        MemoryThesaurus thesaurus = new MemoryThesaurus();
         InputStream is = WordNetThesaurusReader.class.getResourceAsStream(THESAURUS_FILE);
         Map<String, ThesaurusEntry[]> map = read(is);
         thesaurus.buildIndex(map);

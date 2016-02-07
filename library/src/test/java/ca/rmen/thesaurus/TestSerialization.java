@@ -29,10 +29,10 @@ public class TestSerialization {
 
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        Thesaurus thesaurus1 = WordNetThesaurusReader.createThesaurus();
+        MemoryThesaurus thesaurus1 = WordNetThesaurusReader.createThesaurus();
         File tempFile = File.createTempFile("thesaurus-ser", null);
-        thesaurus1.save(tempFile);
-        Thesaurus thesaurus2 = Thesaurus.load(tempFile);
+        thesaurus1.saveBinary(tempFile);
+        Thesaurus thesaurus2 = MemoryThesaurus.loadBinary(tempFile);
         Assert.assertEquals(thesaurus1, thesaurus2);
     }
 }
