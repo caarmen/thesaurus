@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class TestWordNetThesaurusReader {
-    private static final String THESAURUS_FILE = "src/main/resources/dictionary_files/wordnet/th_en_US_new.dat";
+    private static final String THESAURUS_FILE = "src/main/resources/dictionary_files/wordnet/th_en_US_v2.dat";
 
     @Test
     public void testLoadThesaurus() throws IOException {
