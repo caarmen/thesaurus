@@ -10,7 +10,7 @@ To test out the library on the command-line:
 
 ```
     ./gradlew clean cliJar
-    java -jar example/build/libs/example-all-1.1-SNAPSHOT.jar <word to look up>
+    java -jar example/build/libs/example-all-1.1-SNAPSHOT.jar query <word to look up>
 ```
 
 This brand new library is not yet available on a remote maven repository.
