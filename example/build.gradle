@@ -1,5 +1,5 @@
 group 'ca.rmen'
-version '1.0-SNAPSHOT'
+version '1.1-SNAPSHOT'
 
 apply plugin: 'java'
 
@@ -7,7 +7,7 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 // create a single Jar with all dependencies
@@ -25,5 +25,6 @@ task cliJar(type: Jar) {
 
 dependencies {
     compile "org.xerial:sqlite-jdbc:3.8.11.2"
+    compile 'ca.rmen:porter-stemmer:1.0.0'
     compile project(':library')
 }

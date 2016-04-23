@@ -10,7 +10,7 @@ To test out the library on the command-line:
 
 ```
     ./gradlew clean cliJar
-    java -jar example/build/libs/example-all-1.0-SNAPSHOT.jar <word to look up>
+    java -jar example/build/libs/example-all-1.1-SNAPSHOT.jar <word to look up>
 ```
 
 This brand new library is not yet available on a remote maven repository.
@@ -38,12 +38,12 @@ Then include this maven dependency:
     <dependency>
       <groupId>ca.rmen</groupId>
       <artifactId>thesaurus</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-    compile 'ca.rmen:thesaurus:1.0-SNAPSHOT'
+    compile 'ca.rmen:thesaurus:1.1-SNAPSHOT'
 ```

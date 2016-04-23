@@ -19,6 +19,7 @@
 
 package ca.rmen.thesaurus.cli;
 
+import ca.rmen.porterstemmer.PorterStemmer;
 import ca.rmen.thesaurus.MemoryThesaurus;
 import ca.rmen.thesaurus.RogetThesaurusReader;
 import ca.rmen.thesaurus.ThesaurusEntry;
@@ -56,21 +57,23 @@ public class DbExport {
             file.delete();
             connection = getDbConnection(file.getAbsolutePath());
             Statement createTableStatement = connection.createStatement();
-            createTableStatement.execute("CREATE TABLE thesaurus (word, word_type, synonyms, antonyms)");
+            createTableStatement.execute("CREATE TABLE thesaurus (word, stem, word_type, synonyms, antonyms)");
             createTableStatement.close();
             Set<String> words = new TreeSet<>();
             words.addAll(thesaurus.getWords());
             PreparedStatement insertStatement =
-                    connection.prepareStatement("INSERT INTO thesaurus (word, word_type, synonyms, antonyms) VALUES (?, ?, ?, ?)");
+                    connection.prepareStatement("INSERT INTO thesaurus (word, stem, word_type, synonyms, antonyms) VALUES (?, ?, ?, ?, ?)");
             int row = 0;
             int totalWords = words.size();
             int wordIndex = 0;
             long before = System.currentTimeMillis();
+            PorterStemmer stemmer = new PorterStemmer();
             for (String word : words) {
                 ThesaurusEntry[] entries = thesaurus.getEntries(word);
                 for (ThesaurusEntry entry : entries) {
                     int column = 1;
                     insertStatement.setString(column++, word);
+                    insertStatement.setString(column++, stemmer.stemWord(word));
                     insertStatement.setString(column++, entry.wordType.name());
                     insertStatement.setString(column++, join(entry.synonyms));
                     insertStatement.setString(column++, join(entry.antonyms));
